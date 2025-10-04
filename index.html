@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Happy Birthday lamoo</title>
 
   <!-- libs -->
@@ -53,7 +53,8 @@
     .presents{
       align-self: center;
       display:flex; justify-content:center; align-items:flex-end;
-      height: 62vh; gap: 1.2vh;
+      height: min(58svh, 62vh);            /* mobile-safe vh */
+      gap: 1.2vh;
       padding-inline: clamp(8px, 2vw, 24px);
       width: 100%;
     }
@@ -101,7 +102,7 @@
     .present .bow::before{ left:1.9vh; }
     .present .bow::after { right:1.9vh; }
 
-    /* ORIGINAL BOW/RIBBON COLORS (restored) */
+    /* ORIGINAL BOW/RIBBON COLORS (unchanged) */
     .present.pink .ribbon,
     .present.pink .bow,
     .present.pink .bow::before,
@@ -132,34 +133,21 @@
     @keyframes wiggle{ 0%{transform:translateZ(0)} 30%{transform:scale(1.04,.94)} 60%{transform:scale(.95,1.05)} 100%{transform:translateZ(0)} }
 
     /* Center CTA (text only) */
- .cta-center{
-  position:absolute; left:50%; top:42%;
-  transform: translate(-50%, -50%);
-  background: transparent; border:0;
-  color:#6C284D;
-  font-weight: 700;
-  text-shadow: 2px 2px var(--border-color), 0 0 10px rgba(255,181,192,.35);
-  font-family: 'Dancing Script', cursive;
-  font-size: 35px;
-  line-height: 1;
-
-  /* keep it on ONE line */
-  white-space: nowrap;       
-  max-width: none;          
-
-  padding: 0 .3em;
-  cursor: pointer; z-index: 2;
-  transition: transform .18s ease;
-
-  /* remove this — it was shifting position and encouraging wrap */
-  /* margin-top: 20%; */
-}
-.cta-center:hover,
-.cta-center:focus-visible{
-  transform: translate(-50%, -50%) scale(1.08);
-  outline: none;
-}
-
+    .cta-center{
+      position:absolute; left:50%; top:42%;
+      transform: translate(-50%, -50%);
+      background: transparent; border:0;
+      color:#6C284D; font-weight:700;
+      text-shadow: 2px 2px var(--border-color), 0 0 10px rgba(255,181,192,.35);
+      font-family: 'Dancing Script', cursive;
+      font-size: 35px; line-height:1;
+      white-space: nowrap;
+      padding: 0 .3em; cursor: pointer; z-index: 2;
+      transition: transform .18s ease;
+    }
+    .cta-center:hover,.cta-center:focus-visible{
+      transform: translate(-50%, -50%) scale(1.08); outline:none;
+    }
 
     /* Card overlay */
     .card-overlay{
@@ -176,7 +164,6 @@
       box-shadow: 0 22px 55px rgba(0,0,0,.28);
       font-family: 'Dancing Script', cursive;
       color: #2c2c2c;
-      font-size: larger;
       position: relative;
     }
     .card__close{
@@ -185,7 +172,7 @@
       background: #F8DCD4; cursor: pointer; font-size: 22px; line-height: 1;
     }
     .card__title{ margin: 0 0 10px; font-size: 26px; color: #6C284D; }
-    .card__body{ font-size: 20px; line-height: 1.65;font-weight: bolder; white-space: pre-wrap; }
+    .card__body{ font-size: 20px; line-height: 1.65; font-weight: bolder; white-space: pre-wrap; }
     .is-hidden { display: none !important; }
 
     /* Fireworks '21' */
@@ -203,6 +190,42 @@
       0%   { opacity:0; transform: translate(-50%,-50%) scale(.6); }
       20%  { opacity:1; transform: translate(-50%,-62%) scale(1.22); }
       100% { opacity:0; transform: translate(-50%,-110%) scale(1); }
+    }
+
+    /* ====== RESPONSIVE TUNING ====== */
+
+    /* Tablets */
+    @media (max-width: 768px) {
+      .container { padding-top: calc(6vh + env(safe-area-inset-top)); }
+      .text{ font-size: clamp(2.1rem, 6.2vw, 3.4rem); }
+      .heartImg{ width: clamp(56px, 8vh, 96px); }
+      .presents{ height: 52svh; }
+
+      .present.pink   { width: 30vh; height: 26vh; }
+      .present.yellow { width: 34vh; height: 32vh; }
+      .present.purple { width: 28vh; height: 24vh; }
+
+      .cta-center{ top: 40%; font-size: 28px; }
+    }
+
+    /* Phones */
+    @media (max-width: 420px) {
+      .text{ font-size: clamp(1.8rem, 8.5vw, 2.6rem); }
+      .heartImg{ width: 56px; }
+      .presents{ height: 48svh; gap: .8vh; }
+
+      .present.pink   { width: 26vh; height: 22vh; }
+      .present.yellow { width: 30vh; height: 28vh; }
+      .present.purple { width: 24vh; height: 20vh; }
+
+      .cta-center{ top: 38%; font-size: 24px; }
+    }
+
+    /* Very small phones */
+    @media (max-width: 340px) {
+      .text{ font-size: clamp(1.6rem, 9vw, 2.2rem); }
+      .presents{ height: 45svh; }
+      .cta-center{ font-size: 22px; top: 37%; }
     }
   </style>
 </head>
@@ -223,7 +246,6 @@
       <div class="present yellow" data-card="main" aria-label="Open present">
         <div class="lid"></div><div class="box"></div><div class="bow"></div><div class="ribbon"></div>
         <button class="cta-center" type="button">✨Open me✨</button>
-        
       </div>
 
       <div class="present purple" aria-hidden="true">
@@ -272,35 +294,29 @@
       const cardTitle = document.getElementById('cardTitle');
       const cardBody  = document.getElementById('cardBody');
 
-      /* ====== EDIT THIS MESSAGE ====== */
+      /* EDIT THIS MESSAGE ONLY */
       const message = {
         title: "HAPPY BIRTHDAY LAMA!🎉❤️",
         body: `Dear Lama,
-Happy birthday to someone who truly makes the world a brighter place. Your kindness, your creativity, and the way you make every moment feel fun are just a few of the things we love about you. 
-We’re so grateful for you, and we probably don’t say that enough. 
-We can’t wait to see all the wonderful things this next year has in store for you. May it be filled with everything that makes you smile, growth that excites you, and dreams that feel a little closer everyday. Here’s to more of everything we love: the late night laughs, the spontaneous adventure, and the memories we’ll hold onto forever. 
+Happy birthday to someone who truly makes the world a brighter place. Your kindness, your creativity, and the way you make every moment feel fun are just a few of the things we love about you.
+We’re so grateful for you, and we probably don’t say that enough.
+We can’t wait to see all the wonderful things this next year has in store for you. May it be filled with everything that makes you smile, growth that excites you, and dreams that feel a little closer everyday. Here’s to more of everything we love: the late night laughs, the spontaneous adventure, and the memories we’ll hold onto forever.
 Have the most amazing day today and everyday. you absolutely deserve it.
 Love you always❤️
 - Shahad & Alaa `
       };
-      /* ================================= */
 
       // Open card by clicking the center present or its CTA
       const center = document.querySelector('.present.yellow[data-card="main"]');
-      center.addEventListener('click', (e) => {
-        if (e.target.closest('.present.yellow')) {
-          cardTitle.textContent = message.title;
-          cardBody.textContent  = message.body;
-          overlay.classList.remove('is-hidden');
-        }
-      });
       const cta = center.querySelector('.cta-center');
-      cta.addEventListener('click', (e) => {
-        e.stopPropagation();
+      function openCard(e){
+        if (e) e.stopPropagation();
         cardTitle.textContent = message.title;
         cardBody.textContent  = message.body;
         overlay.classList.remove('is-hidden');
-      });
+      }
+      center.addEventListener('click', openCard);
+      cta.addEventListener('click', openCard);
 
       // Close the card
       closeBtn.addEventListener('click', () => overlay.classList.add('is-hidden'));
@@ -308,7 +324,7 @@ Love you always❤️
         if (!e.target.closest('.card')) overlay.classList.add('is-hidden');
       });
 
-      // === Fireworks: plum -> baby pink (RESTORED) ===
+      // Fireworks colors: plum -> baby pink
       function bursty(x, y) {
         if (!window.mojs) return;
         new mojs.Burst({
